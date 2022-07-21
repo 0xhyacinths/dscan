@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { Col, Container, Row } from 'sveltestrap';
 	import Nav from '../components/Nav.svelte';
-  import {onMount} from 'svelte';
+	import { onMount } from 'svelte';
 	import Address from '../components/Address.svelte';
 	import Block from '../components/Block.svelte';
 	import Transaction from '../components/Transaction.svelte';
@@ -23,12 +23,11 @@
 			} as SearchResult;
 		}
 		return null;
-
 	}
 
-  onMount(async () => {
-    console.log("mount");
-  });
+	onMount(async () => {
+		console.log('mount');
+	});
 
 	function handleSearch(res: CustomEvent<SearchResult>) {
 		let qs = new URLSearchParams($page.url.searchParams.toString());

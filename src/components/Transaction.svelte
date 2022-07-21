@@ -33,7 +33,7 @@
 	}
 
 	export let query: string;
-  let lastQuery: string;
+	let lastQuery: string;
 
 	let receipt: ethers.providers.TransactionReceipt;
 	let txn: ethers.providers.TransactionResponse;
@@ -47,15 +47,15 @@
 	let height: number;
 
 	onMount(async () => {
-    lastQuery = query;
+		lastQuery = query;
 		await fetchData();
 	});
 
 	afterUpdate(async () => {
-    if (lastQuery == query) {
-      return;
-    }
-    lastQuery = query;
+		if (lastQuery == query) {
+			return;
+		}
+		lastQuery = query;
 		await fetchData();
 	});
 
@@ -222,7 +222,7 @@
 												<a href={'#'} on:click={() => linkAddress(receipt.contractAddress)}
 													>{receipt.contractAddress}</a
 												>
-												 (Contract Created)</td
+												(Contract Created)</td
 											>
 										{/if}
 									</tr>
@@ -301,7 +301,10 @@
 										<tr>
 											<th class="titleWidth" scope="row">Address</th>
 
-											<td><a href={'#'} on:click={() => linkAddress(log.address)}>{log.address}</a></td>
+											<td
+												><a href={'#'} on:click={() => linkAddress(log.address)}>{log.address}</a
+												></td
+											>
 										</tr>
 										<tr>
 											<th class="titleWidth" scope="row">Data</th>

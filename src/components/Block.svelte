@@ -1,14 +1,5 @@
 <script lang="ts">
-	import {
-		Col,
-		Row,
-		Alert,
-		Spinner,
-		Card,
-		CardBody,
-		CardHeader,
-		Table
-	} from 'sveltestrap';
+	import { Col, Row, Alert, Spinner, Card, CardBody, CardHeader, Table } from 'sveltestrap';
 	import { ethers } from 'ethers';
 	import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
 	import { State } from '../lib/state';
@@ -19,7 +10,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let query: string;
-  let lastQuery:string;
+	let lastQuery: string;
 
 	let block: ethers.providers.Block;
 	let state: State = State.Loading;
@@ -27,15 +18,15 @@
 	let minerENS: string | null;
 
 	onMount(async () => {
-    lastQuery = query;
+		lastQuery = query;
 		await fetchData();
 	});
 
 	afterUpdate(async () => {
-    if (lastQuery == query) {
-      return;
-    }
-    lastQuery = query;
+		if (lastQuery == query) {
+			return;
+		}
+		lastQuery = query;
 		await fetchData();
 	});
 

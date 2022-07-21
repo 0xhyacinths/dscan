@@ -4,7 +4,7 @@ A decentralized blockchain explorer!
 ***This is very early, so please bear with me as things are in flux.***
 
 With the adoption of blockchain technology, it has become important to be able
-to read the current state of the blockchain. DScan is a project to become a 
+to read the current state of the blockchain. DScan is a project to become a
 decentralized explorer for Ethereum and Ethereum-Compatible chains with strong
 delineation between what can be done entirely in-browser and what requires a
 separate indexer server.
@@ -46,4 +46,9 @@ to not secretly modify data as it may result in misleading information that does
 not accurately reflect on-chain state.
 
 
+## Notes
+The CBOR library used does not work correctly normally. It needs to be patched
+as per [this issue][2]
+
 [1]: https://github.com/grpc-ecosystem/grpc-gateway
+[2]: https://github.com/dignifiedquire/borc/issues/49

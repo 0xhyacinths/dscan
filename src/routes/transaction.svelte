@@ -14,6 +14,7 @@
 		TabPane,
 		Badge
 	} from 'sveltestrap';
+  import Search from '../components/Search.svelte';
 	import { ethers } from 'ethers';
 	import { onMount } from 'svelte';
 
@@ -116,6 +117,8 @@
 
 <Container>
 	<div class="padded" />
+  <Search />
+	<div class="padded" />
 	<Row>
 		<Col
 			>{#if state == State.Error}
@@ -156,7 +159,8 @@
 										<tr>
 											<th class="titleWidth" scope="row">Block</th>
 											<td
-												>{receipt.blockNumber}
+												><a href="/block?id={receipt.blockNumber}"
+                        >{receipt.blockNumber}</a>
 												<Badge color="secondary"
 													>{height - receipt.blockNumber + 1} blocks ago</Badge
 												></td

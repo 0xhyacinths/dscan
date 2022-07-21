@@ -11,6 +11,7 @@
 		CardHeader,
 		Table
 	} from 'sveltestrap';
+	import Search from '../components/Search.svelte';
 	import { ethers } from 'ethers';
 	import { onMount } from 'svelte';
 
@@ -105,6 +106,8 @@
 </svelte:head>
 
 <Container>
+	<div class="padded" />
+  <Search />
 	<div class="padded" />
 	<Row>
 		<Col

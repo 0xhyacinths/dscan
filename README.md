@@ -48,7 +48,7 @@ not accurately reflect on-chain state.
 
 ## Notes
 The CBOR library used does not work correctly normally. It needs to be patched
-as per [this issue][2]
+as per [this issue][2]. This is done automatically when you run `npm install`.
 
 [1]: https://github.com/grpc-ecosystem/grpc-gateway
 [2]: https://github.com/dignifiedquire/borc/issues/49

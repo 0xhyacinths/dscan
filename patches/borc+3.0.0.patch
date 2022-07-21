@@ -1,0 +1,35 @@
+diff --git a/node_modules/borc/src/decoder.asm.js b/node_modules/borc/src/decoder.asm.js
+index d77a3c2..36075b6 100644
+--- a/node_modules/borc/src/decoder.asm.js
++++ b/node_modules/borc/src/decoder.asm.js
+@@ -5,7 +5,7 @@ module.exports = function decodeAsm (stdlib, foreign, buffer) {
+ 
+   // -- Imports
+ 
+-  var heap = new stdlib.Uint8Array(buffer)
++  var heap = new Uint8Array(buffer)
+   // var log = foreign.log
+   var pushInt = foreign.pushInt
+   var pushInt32 = foreign.pushInt32
+@@ -47,7 +47,7 @@ module.exports = function decodeAsm (stdlib, foreign, buffer) {
+ 
+   var pushBreak = foreign.pushBreak
+ 
+-  var pow = stdlib.Math.pow
++  var pow = Math.pow
+ 
+   // -- Constants
+ 
+diff --git a/node_modules/borc/src/decoder.js b/node_modules/borc/src/decoder.js
+index da3061a..6b494ff 100644
+--- a/node_modules/borc/src/decoder.js
++++ b/node_modules/borc/src/decoder.js
+@@ -55,7 +55,7 @@ class Decoder {
+     }, opts.tags)
+ 
+     // Initialize asm based parser
+-    this.parser = parser(global, {
++    this.parser = parser(0, {
+       // eslint-disable-next-line no-console
+       log: console.log.bind(console),
+       pushInt: this.pushInt.bind(this),

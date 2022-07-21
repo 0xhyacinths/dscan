@@ -19,6 +19,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let query: string;
+  let lastQuery:string;
 
 	let block: ethers.providers.Block;
 	let state: State = State.Loading;
@@ -26,10 +27,15 @@
 	let minerENS: string | null;
 
 	onMount(async () => {
+    lastQuery = query;
 		await fetchData();
 	});
 
 	afterUpdate(async () => {
+    if (lastQuery == query) {
+      return;
+    }
+    lastQuery = query;
 		await fetchData();
 	});
 

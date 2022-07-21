@@ -33,6 +33,7 @@
 	}
 
 	export let query: string;
+  let lastQuery: string;
 
 	let receipt: ethers.providers.TransactionReceipt;
 	let txn: ethers.providers.TransactionResponse;
@@ -46,10 +47,15 @@
 	let height: number;
 
 	onMount(async () => {
+    lastQuery = query;
 		await fetchData();
 	});
 
 	afterUpdate(async () => {
+    if (lastQuery == query) {
+      return;
+    }
+    lastQuery = query;
 		await fetchData();
 	});
 

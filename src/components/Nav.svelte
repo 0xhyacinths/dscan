@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Navbar, NavbarBrand } from 'sveltestrap';
+	import { Navbar, NavbarBrand, Button, Popover } from 'sveltestrap';
 
 	import Search from './Search.svelte';
 </script>

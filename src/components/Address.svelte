@@ -12,6 +12,8 @@
 	}
 
 	export let query: string;
+	let lastQuery: string;
+
 	let state: State = State.Loading;
 	let err = '';
 
@@ -22,10 +24,15 @@
 	let cborData: string | null;
 
 	onMount(async () => {
+		lastQuery = query;
 		await fetchData();
 	});
 
 	afterUpdate(async () => {
+		if (lastQuery == query) {
+			return;
+		}
+		lastQuery = query;
 		await fetchData();
 	});
 

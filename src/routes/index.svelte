@@ -3,11 +3,9 @@
 	import { Col, Container, Row } from 'sveltestrap';
 	import Nav from '../components/Nav.svelte';
   import {onMount} from 'svelte';
-
 	import Address from '../components/Address.svelte';
 	import Block from '../components/Block.svelte';
 	import Transaction from '../components/Transaction.svelte';
-
 	import type { SearchResult } from '../lib/search';
 	import { ResultType } from '../lib/search';
 	import { goto } from '$app/navigation';
@@ -28,7 +26,7 @@
 
 	}
 
-  onMount(() => {
+  onMount(async () => {
     console.log("mount");
   });
 

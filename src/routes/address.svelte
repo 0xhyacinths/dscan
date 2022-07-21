@@ -11,9 +11,11 @@
 		CardHeader,
 		Table
 	} from 'sveltestrap';
-  import Search from '../components/Search.svelte';
+	import Search from '../components/Search.svelte';
 	import { ethers } from 'ethers';
 	import { onMount } from 'svelte';
+	// @ts-ignore
+	import borc from 'borc';
 
 	enum State {
 		Loading,
@@ -33,6 +35,7 @@
 	let contractCode: string;
 	let totalTx: number;
 	let ensAddress: string | null;
+  let cborData: string | null;
 
 	onMount(async () => {
 		if (window.ethereum === undefined) {
@@ -44,6 +47,9 @@
 		try {
 			balance = await provider.getBalance(id!);
 			contractCode = await provider.getCode(id!);
+			if (contractCode.length > 2) {
+				cborData = parseCBOR(contractCode);
+			}
 			totalTx = await provider.getTransactionCount(id!);
 			ensAddress = await provider.lookupAddress(id!);
 		} catch (e) {
@@ -53,6 +59,28 @@
 		}
 		state = State.Loaded;
 	});
+
+	function parseCBOR(code: string): string | null {
+		const length = ethers.BigNumber.from(`0x${code.substring(code.length - 4)}`).toNumber();
+		const cborData = code.substring(code.length - (4 + length * 2), code.length - 4);
+		if (cborData) {
+      try {
+			const data = borc.decode(cborData);
+      let storage: any = {};
+			for (const property in data) {
+				storage[property] = buf2hex(data[property] as Uint8Array);
+			}
+			return JSON.stringify(storage, null, 2);
+      } catch (error) {
+        return null;
+      }
+		}
+    return null;
+	}
+
+	function buf2hex(buffer: Uint8Array): string {
+		return [...new Uint8Array(buffer)].map((x) => x.toString(16).padStart(2, '0')).join('');
+	}
 </script>
 
 <svelte:head>
@@ -61,7 +89,7 @@
 
 <Container>
 	<div class="padded" />
-  <Search />
+	<Search />
 	<div class="padded" />
 	<Row>
 		<Col
@@ -106,6 +134,20 @@
 												name="text"
 												readonly
 												bind:value={contractCode}
+											/></td
+										>
+									</tr>
+								{/if}
+                {#if cborData}
+									<tr>
+										<th class="titleWidth" scope="row">Metadata</th>
+										<td
+											><textarea
+												class="form-control contractCode"
+												rows="4"
+												name="text"
+												readonly
+												bind:value={cborData}
 											/></td
 										>
 									</tr>

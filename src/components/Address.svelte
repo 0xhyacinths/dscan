@@ -82,10 +82,6 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Address {query}</title>
-</svelte:head>
-
 <Row>
 	<Col
 		>{#if state == State.Error}

@@ -64,10 +64,6 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Block {query}</title>
-</svelte:head>
-
 <Row>
 	<Col
 		>{#if state == State.Error}

@@ -136,10 +136,6 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Transaction {query}</title>
-</svelte:head>
-
 <Row>
 	<Col
 		>{#if state == State.Error}

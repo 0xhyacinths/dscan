@@ -9,6 +9,7 @@
 	import type { SearchResult } from '../lib/search';
 	import { ResultType } from '../lib/search';
 	import { goto } from '$app/navigation';
+  import {CreateClient} from '../lib/api';
 
 	$: current = getCurrent($page.url.searchParams);
 
@@ -26,6 +27,10 @@
 	}
 
 	onMount(async () => {
+    const c = CreateClient("http://127.0.0.1:9090");
+    const hello = c.path("/v1/descan/hello").method("post").create();
+    const response = await hello({message: "foobarbaz"});
+    console.log("should say hi:", response.data.message);
 		console.log('mount');
 	});
 

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package descan;
+option go_package = "gitlab.com/0xhyacinths/dscan/server/proto";
+import "google/api/annotations.proto";
+
+
+message Hello {
+  string message = 1;
+}
+
+service DescanIndexer {
+  rpc SayHi (Hello) returns (Hello) {
+    option (google.api.http) = {
+      post: "/v1/descan/hello"
+       body: "*"
+      };
+    }
+}

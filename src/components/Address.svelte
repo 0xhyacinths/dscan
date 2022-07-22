@@ -45,7 +45,7 @@
 	});
 
 	async function fetchData() {
-    state = State.Loading;
+		state = State.Loading;
 		if (window.ethereum === undefined) {
 			state = State.Error;
 			err = 'No Ethereum provider found.';
@@ -67,11 +67,13 @@
 			state = State.Error;
 			return;
 		}
+		state = State.LoadServer;
 		try {
 			txs = await client.getTxsForAddress(query);
 		} catch (e) {
 			console.log('no server', e);
 		}
+    console.log("done load");
 		state = State.Loaded;
 	}
 
@@ -151,7 +153,7 @@
 			<div class="text-center">
 				<Spinner color="dark" />
 			</div>
-		{:else if state == State.Loaded}
+		{:else if state == State.Loaded || state == State.LoadServer}
 			<Card class="mb-3">
 				<CardHeader>
 					Address {query}
@@ -203,40 +205,46 @@
 							{/if}
 						</tbody>
 					</Table>
-					{#if txs}
-						<hr />
-						<Table responsive borderless class="table-nomargin">
-							<tbody>
-								<tr>
-									<th>Tx Hash</th>
-									<th>Block</th>
-									<th>From</th>
-									<th>To</th>
-									<th>Value (Ether)</th>
-								</tr>
-								{#each txs as tx}
+					{#if state == State.LoadServer}
+						<div class="text-center">
+							<Spinner color="dark" />
+						</div>
+					{:else if state == State.Loaded}
+						{#if txs}
+							<hr />
+							<Table responsive borderless class="table-nomargin">
+								<tbody>
 									<tr>
-										<td><a href={'#'} on:click={() => linkTx(tx.tx)}>{abbr(tx.tx)}</a></td>
-										<td><a href={'#'} on:click={() => linkBlock(tx.block)}>{tx.block}</a></td>
-										<td>
-											{#if isCurrent(tx.from)}
-												{abbr(tx.from)}
-											{:else}
-												<a href={'#'} on:click={() => linkAddress(tx.from)}>{abbr(tx.from)}</a>
-											{/if}
-										</td>
-										<td>
-											{#if isCurrent(tx.to)}
-												{abbr(tx.to)}
-											{:else}
-												<a href={'#'} on:click={() => linkAddress(tx.to)}>{abbr(tx.to)}</a>
-											{/if}
-										</td>
-										<td>{formatEth(ethers.BigNumber.from(tx.amount))}</td>
+										<th>Tx Hash</th>
+										<th>Block</th>
+										<th>From</th>
+										<th>To</th>
+										<th>Value (Ether)</th>
 									</tr>
-								{/each}
-							</tbody>
-						</Table>
+									{#each txs as tx}
+										<tr>
+											<td><a href={'#'} on:click={() => linkTx(tx.tx)}>{abbr(tx.tx)}</a></td>
+											<td><a href={'#'} on:click={() => linkBlock(tx.block)}>{tx.block}</a></td>
+											<td>
+												{#if isCurrent(tx.from)}
+													{abbr(tx.from)}
+												{:else}
+													<a href={'#'} on:click={() => linkAddress(tx.from)}>{abbr(tx.from)}</a>
+												{/if}
+											</td>
+											<td>
+												{#if isCurrent(tx.to)}
+													{abbr(tx.to)}
+												{:else}
+													<a href={'#'} on:click={() => linkAddress(tx.to)}>{abbr(tx.to)}</a>
+												{/if}
+											</td>
+											<td>{formatEth(ethers.BigNumber.from(tx.amount))}</td>
+										</tr>
+									{/each}
+								</tbody>
+							</Table>
+						{/if}
 					{/if}
 				</CardBody>
 			</Card>

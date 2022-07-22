@@ -71,6 +71,12 @@
 	</Row>
 </Container>
 
+<div class="container">
+  <footer class="py-3 my-4">
+    <p class="text-center text-muted"><a href="https://gitlab.com/0xhyacinths/dscan" class="text-muted">DScan</a> {__APP_VERSION__}</p>
+  </footer>
+</div>
+
 <style>
 	.padded {
 		margin-top: 2rem;

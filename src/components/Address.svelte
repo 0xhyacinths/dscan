@@ -92,6 +92,7 @@
 	}
 
 	async function fetchServerData() {
+    txs = [];
 		let response = await client.getTxsForAddress(query.query, page.toString(), offset.toString());
 		txs = response?.txs;
 		hasNextPage = response?.hasMore;

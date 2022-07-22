@@ -65,11 +65,6 @@
 			err = 'No Ethereum provider found.';
 			return;
 		}
-		if (query.page) {
-			page = query.page;
-		} else {
-			page = 1;
-		}
 		const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
 		try {
 			balance = await provider.getBalance(query.query);
@@ -110,11 +105,6 @@
 		} else {
 			return;
 		}
-		dispatch('updateSearch', {
-			query: query.query,
-			type: ResultType.Address,
-			page: page
-		} as SearchResult);
 		state = State.LoadServer;
 		try {
 			await fetchServerData();

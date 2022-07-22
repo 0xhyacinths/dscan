@@ -7,5 +7,4 @@ export enum ResultType {
 export interface SearchResult {
   query: string,
   type: ResultType,
-  page: number | undefined,
 }

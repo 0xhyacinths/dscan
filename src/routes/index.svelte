@@ -13,22 +13,16 @@
 	import { ethers } from 'ethers';
 
 	const version: string = __APP_VERSION__;
-	let current: SearchResult | null;
+  $: current = getCurrent($page.url.searchParams);
 
 	function getCurrent(params: URLSearchParams): SearchResult | null {
 		const typeStr = params.get('type');
 		const queryStr = params.get('query');
-		const page = params.get('page');
 		if (typeStr && queryStr) {
-			let cPage = 1;
-			if (page) {
-				cPage = parseInt(page);
-			}
 			const type: ResultType = parseInt(typeStr) as ResultType;
 			return {
 				query: queryStr,
-				type: type,
-				page: cPage
+				type: type
 			} as SearchResult;
 		}
 		return null;
@@ -46,21 +40,18 @@
 		console.log('mount');
 	});
 
-	function handleSearch(res: CustomEvent<SearchResult>) {
-		updateSearch(res);
+	async function handleSearch(res: CustomEvent<SearchResult>) {
+		await updateSearch(res);
 		console.log('gone to');
 		current = getCurrent($page.url.searchParams);
 	}
 
-	function updateSearch(res: CustomEvent<SearchResult>) {
+	async function updateSearch(res: CustomEvent<SearchResult>) {
 		let qs = new URLSearchParams($page.url.searchParams.toString());
 		qs.set('type', res.detail.type.toString());
 		qs.set('query', res.detail.query);
-		if (res.detail.page) {
-			qs.set('page', res.detail.page.toString());
-		}
 		console.log(qs.toString());
-		goto(`/?${qs.toString()}`);
+		await goto(`/?${qs.toString()}`);
 	}
 </script>
 

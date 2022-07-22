@@ -1,5 +1,15 @@
 <script lang="ts">
-	import { Col, Row, Alert, Spinner, Card, CardBody, CardHeader, Table } from 'sveltestrap';
+	import {
+		Col,
+		Row,
+		Alert,
+		Spinner,
+		Card,
+		CardBody,
+		CardHeader,
+		Table,
+		Collapse
+	} from 'sveltestrap';
 	import { ethers } from 'ethers';
 	import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
 	import { State } from '../lib/state';
@@ -16,6 +26,7 @@
 	let state: State = State.Loading;
 	let err = '';
 	let minerENS: string | null;
+	let expanded = false;
 
 	onMount(async () => {
 		lastQuery = query;
@@ -62,6 +73,13 @@
 			type: ResultType.Address
 		} as SearchResult);
 	}
+
+	function linkTx(tx: string) {
+		dispatch('search', {
+			query: tx,
+			type: ResultType.Transaction
+		} as SearchResult);
+	}
 </script>
 
 <Row>
@@ -97,7 +115,26 @@
 							</tr>
 							<tr>
 								<th class="titleWidth" scope="row">Transactions</th>
-								<td>{block.transactions.length}</td>
+								<td>
+									{block.transactions.length}
+									{#if block.transactions.length > 0}
+										<a href={'#'} on:click={() => (expanded = !expanded)}>
+											{#if expanded}
+												Hide
+											{:else}
+												Show
+											{/if}
+										</a>
+										<Collapse isOpen={expanded}>
+											<div class="big">
+												{#each block.transactions as transaction, idx}
+													{idx + 1}:
+													<a href={'#'} on:click={() => linkTx(transaction)}>{transaction}</a><br />
+												{/each}
+											</div>
+										</Collapse>
+									{/if}
+								</td>
 							</tr>
 							<tr>
 								<th class="titleWidth" scope="row">Miner</th>
@@ -158,5 +195,10 @@
 		outline: 0px !important;
 		-webkit-appearance: none;
 		box-shadow: none !important;
+	}
+
+	.big {
+		max-height: 200px;
+		overflow: scroll;
 	}
 </style>

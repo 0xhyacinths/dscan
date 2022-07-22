@@ -12,6 +12,7 @@
 	import { DescanClient } from '../lib/api';
 	import { ethers } from 'ethers';
 
+  const version:string = __APP_VERSION__;
 	$: current = getCurrent($page.url.searchParams);
 
 	function getCurrent(params: URLSearchParams): SearchResult | null {
@@ -73,7 +74,7 @@
 
 <div class="container">
   <footer class="py-3 my-4">
-    <p class="text-center text-muted"><a href="https://gitlab.com/0xhyacinths/dscan" class="text-muted">DScan</a> {__APP_VERSION__}</p>
+    <p class="text-center text-muted"><a href="https://gitlab.com/0xhyacinths/dscan" class="text-muted">DScan</a> {version}</p>
   </footer>
 </div>
 

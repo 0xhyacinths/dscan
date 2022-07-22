@@ -9,7 +9,8 @@
 	import type { SearchResult } from '../lib/search';
 	import { ResultType } from '../lib/search';
 	import { goto } from '$app/navigation';
-  import {CreateClient} from '../lib/api';
+	import { DescanClient } from '../lib/api';
+	import { ethers } from 'ethers';
 
 	$: current = getCurrent($page.url.searchParams);
 
@@ -26,11 +27,14 @@
 		return null;
 	}
 
+  let client: DescanClient = new DescanClient("http://127.0.0.1:9090", 0);
+
 	onMount(async () => {
-    const c = CreateClient("http://127.0.0.1:9090");
-    const hello = c.path("/v1/descan/hello").method("post").create();
-    const response = await hello({message: "foobarbaz"});
-    console.log("should say hi:", response.data.message);
+		if (window.ethereum !== undefined) {
+			const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
+			const network = await provider.getNetwork();
+      client.setNetwork(network.chainId);
+		}
 		console.log('mount');
 	});
 
@@ -47,13 +51,13 @@
 	<title>Decentralized Explorer</title>
 </svelte:head>
 
-<Nav on:search={handleSearch} />
+<Nav on:search={handleSearch} client={client} />
 <Container>
 	<div class="padded" />
 	<Row>
 		{#if current}
 			{#if current.type == ResultType.Address}
-				<Address query={current.query} />
+				<Address query={current.query} on:search={handleSearch} client={client}/>
 			{:else if current.type == ResultType.Block}
 				<Block query={current.query} on:search={handleSearch} />
 			{:else if current.type == ResultType.Transaction}

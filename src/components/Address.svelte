@@ -1,17 +1,23 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { Col, Row, Alert, Spinner, Card, CardBody, CardHeader, Table } from 'sveltestrap';
 	import { ethers } from 'ethers';
-	import { onMount, afterUpdate } from 'svelte';
+	import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
 	import { State } from '../lib/state';
 	// @ts-ignore
 	import borc from 'borc';
+
+	import type { DescanClient } from '../lib/api';
+	import type { definitions } from '../lib/proto/descan';
+	const dispatch = createEventDispatcher();
+	import type { SearchResult } from '../lib/search';
+	import { ResultType } from '../lib/search';
 
 	function formatEth(num: ethers.BigNumber | null | undefined): string {
 		return ethers.utils.formatUnits(num!, 'ether');
 	}
 
 	export let query: string;
+	export let client: DescanClient;
 	let lastQuery: string;
 
 	let state: State = State.Loading;
@@ -22,6 +28,8 @@
 	let totalTx: number;
 	let ensAddress: string | null;
 	let cborData: string | null;
+
+	let txs: definitions['descanTransactionSummary'][] | undefined;
 
 	onMount(async () => {
 		lastQuery = query;
@@ -37,6 +45,7 @@
 	});
 
 	async function fetchData() {
+    state = State.Loading;
 		if (window.ethereum === undefined) {
 			state = State.Error;
 			err = 'No Ethereum provider found.';
@@ -48,6 +57,8 @@
 			contractCode = await provider.getCode(query);
 			if (contractCode.length > 2) {
 				cborData = parseCBOR(contractCode);
+			} else {
+				cborData = null;
 			}
 			totalTx = await provider.getTransactionCount(query);
 			ensAddress = await provider.lookupAddress(query);
@@ -55,6 +66,11 @@
 			err = (e as any).toString();
 			state = State.Error;
 			return;
+		}
+		try {
+			txs = await client.getTxsForAddress(query);
+		} catch (e) {
+			console.log('no server', e);
 		}
 		state = State.Loaded;
 	}
@@ -79,6 +95,48 @@
 
 	function buf2hex(buffer: Uint8Array): string {
 		return [...new Uint8Array(buffer)].map((x) => x.toString(16).padStart(2, '0')).join('');
+	}
+
+	function linkAddress(address: string | undefined) {
+		if (address) {
+			dispatch('search', {
+				query: address,
+				type: ResultType.Address
+			} as SearchResult);
+		}
+	}
+
+	function linkBlock(block: string | undefined) {
+		if (block) {
+			dispatch('search', {
+				query: block,
+				type: ResultType.Block
+			} as SearchResult);
+		}
+	}
+
+	function linkTx(tx: string | undefined) {
+		if (tx) {
+			dispatch('search', {
+				query: tx,
+				type: ResultType.Transaction
+			} as SearchResult);
+		}
+	}
+
+	function isCurrent(address: string | undefined): boolean {
+		if (address) {
+			return address.toLowerCase() == query.toLowerCase();
+		}
+		return false;
+	}
+
+	function abbr(value: string | undefined): string {
+		const partLength = 6;
+		if (value) {
+			return `${value.slice(0, partLength + 2)}...${value.substring(value.length - partLength)}`;
+		}
+		return '';
 	}
 </script>
 
@@ -145,6 +203,41 @@
 							{/if}
 						</tbody>
 					</Table>
+					{#if txs}
+						<hr />
+						<Table responsive borderless class="table-nomargin">
+							<tbody>
+								<tr>
+									<th>Tx Hash</th>
+									<th>Block</th>
+									<th>From</th>
+									<th>To</th>
+									<th>Value (Ether)</th>
+								</tr>
+								{#each txs as tx}
+									<tr>
+										<td><a href={'#'} on:click={() => linkTx(tx.tx)}>{abbr(tx.tx)}</a></td>
+										<td><a href={'#'} on:click={() => linkBlock(tx.block)}>{tx.block}</a></td>
+										<td>
+											{#if isCurrent(tx.from)}
+												{abbr(tx.from)}
+											{:else}
+												<a href={'#'} on:click={() => linkAddress(tx.from)}>{abbr(tx.from)}</a>
+											{/if}
+										</td>
+										<td>
+											{#if isCurrent(tx.to)}
+												{abbr(tx.to)}
+											{:else}
+												<a href={'#'} on:click={() => linkAddress(tx.to)}>{abbr(tx.to)}</a>
+											{/if}
+										</td>
+										<td>{formatEth(ethers.BigNumber.from(tx.amount))}</td>
+									</tr>
+								{/each}
+							</tbody>
+						</Table>
+					{/if}
 				</CardBody>
 			</Card>
 		{/if}

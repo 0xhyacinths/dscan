@@ -7,6 +7,23 @@ import "google/api/annotations.proto";
 
 message Hello {
   string message = 1;
+  uint64 chain_id = 2;
+}
+
+message TxByAddressRequest {
+  string address = 1;
+}
+
+message TxByAddressResponse {
+  repeated TransactionSummary txs = 1;
+}
+
+message TransactionSummary {
+  string from = 1;
+  string to = 2;
+  string amount = 3;
+  string tx = 4;
+  uint64 block = 5;
 }
 
 service DescanIndexer {
@@ -14,6 +31,13 @@ service DescanIndexer {
     option (google.api.http) = {
       post: "/v1/descan/hello"
        body: "*"
-      };
-    }
+    };
+  }
+
+  rpc TxByAddress (TxByAddressRequest) returns (TxByAddressResponse) {
+    option (google.api.http) = {
+      post: "/v1/descan/tx_by_address"
+        body: "*"
+    };
+  }
 }

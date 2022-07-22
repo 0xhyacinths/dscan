@@ -6,8 +6,10 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/nanmu42/etherscan-api"
 	"gitlab.com/0xhyacinths/dscan/server/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -21,7 +23,9 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
-	hd := &handler{}
+	hd := &handler{
+		es: etherscan.New(etherscan.Mainnet, os.Getenv("ES_API")),
+	}
 	proto.RegisterDescanIndexerServer(grpcServer, hd)
 	go func() {
 		log.Fatalln(grpcServer.Serve(lis))
@@ -68,12 +72,12 @@ func corsWrapper(h http.Handler) http.Handler {
 }
 
 type handler struct {
+	es *etherscan.Client
 	proto.UnimplementedDescanIndexerServer
 }
 
 func (h *handler) SayHi(ctx context.Context, g *proto.Hello) (*proto.Hello, error) {
-	fmt.Printf("got %s sending hi!\n", g.Message)
 	return &proto.Hello{
-		Message: "hi!",
+		Message: "Data provided by Etherscan.",
 	}, nil
 }

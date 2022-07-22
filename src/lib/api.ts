@@ -39,13 +39,13 @@ export class DescanClient {
   }
 
   async healthCheck() {
-    if(this.network == 0){
+    if (this.network == 0) {
       return;
     }
     try {
       const stat = await this.getStatus(this.network.toString());
       this.alive.set(true);
-      if(stat.message){
+      if (stat.message) {
         this.message.set(stat.message);
       }
     } catch (err) {
@@ -75,9 +75,13 @@ export class DescanClient {
     return response.data;
   }
 
-  async getTxsForAddress(address: string): Promise<definitions['descanTransactionSummary'][] | undefined> {
+  async getTxsForAddress(address: string, page: string, offset: string): Promise<definitions['descanTxByAddressResponse'] | undefined> {
     const fetchTxs = this.fetcher.path('/v1/descan/tx_by_address').method('post').create();
-    const response = await fetchTxs({ address: address });
-    return response.data.txs;
+    const response = await fetchTxs({
+      address: address,
+      offset: offset,
+      page: page
+    });
+    return response.data;
   }
 }

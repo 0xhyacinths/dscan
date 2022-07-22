@@ -7,7 +7,7 @@ import (
 )
 
 func (h *handler) TxByAddress(ctx context.Context, g *proto.TxByAddressRequest) (*proto.TxByAddressResponse, error) {
-	txs, err := h.es.NormalTxByAddress(g.Address, nil, nil, 1, 25, true)
+	txs, err := h.es.NormalTxByAddress(g.Address, nil, nil, int(g.Page), int(g.Offset)+1, true)
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +22,15 @@ func (h *handler) TxByAddress(ctx context.Context, g *proto.TxByAddressRequest) 
 			Block:  uint64(tx.BlockNumber),
 		}
 	}
+
+	hasMore := false
+	if len(rv) > int(g.Offset) {
+		rv = rv[:len(rv)-1]
+		hasMore = true
+	}
+
 	return &proto.TxByAddressResponse{
-		Txs: rv,
+		Txs:     rv,
+		HasMore: hasMore,
 	}, nil
 }

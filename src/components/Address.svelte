@@ -1,5 +1,16 @@
 <script lang="ts">
-	import { Col, Row, Alert, Spinner, Card, CardBody, CardHeader, Table } from 'sveltestrap';
+	import {
+		Col,
+		Row,
+		Alert,
+		Spinner,
+		Card,
+		CardBody,
+		CardHeader,
+		Table,
+		Button,
+		ButtonGroup
+	} from 'sveltestrap';
 	import { ethers } from 'ethers';
 	import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
 	import { State } from '../lib/state';
@@ -16,9 +27,9 @@
 		return ethers.utils.formatUnits(num!, 'ether');
 	}
 
-	export let query: string;
+	export let query: SearchResult;
 	export let client: DescanClient;
-	let lastQuery: string;
+	let lastQuery: SearchResult;
 
 	let state: State = State.Loading;
 	let err = '';
@@ -28,6 +39,9 @@
 	let totalTx: number;
 	let ensAddress: string | null;
 	let cborData: string | null;
+	let page = 1;
+	const offset = 25;
+	let hasNextPage: boolean | undefined = true;
 
 	let txs: definitions['descanTransactionSummary'][] | undefined;
 
@@ -51,17 +65,22 @@
 			err = 'No Ethereum provider found.';
 			return;
 		}
+		if (query.page) {
+			page = query.page;
+		} else {
+			page = 1;
+		}
 		const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
 		try {
-			balance = await provider.getBalance(query);
-			contractCode = await provider.getCode(query);
+			balance = await provider.getBalance(query.query);
+			contractCode = await provider.getCode(query.query);
 			if (contractCode.length > 2) {
 				cborData = parseCBOR(contractCode);
 			} else {
 				cborData = null;
 			}
-			totalTx = await provider.getTransactionCount(query);
-			ensAddress = await provider.lookupAddress(query);
+			totalTx = await provider.getTransactionCount(query.query);
+			ensAddress = await provider.lookupAddress(query.query);
 		} catch (e) {
 			err = (e as any).toString();
 			state = State.Error;
@@ -69,11 +88,39 @@
 		}
 		state = State.LoadServer;
 		try {
-			txs = await client.getTxsForAddress(query);
+			await fetchServerData();
 		} catch (e) {
 			console.log('no server', e);
 		}
-    console.log("done load");
+		console.log('done load');
+		state = State.Loaded;
+	}
+
+	async function fetchServerData() {
+		let response = await client.getTxsForAddress(query.query, page.toString(), offset.toString());
+		txs = response?.txs;
+		hasNextPage = response?.hasMore;
+	}
+
+	async function gotoPage(offset: number) {
+		if (offset === 1 && hasNextPage) {
+			page = page + 1;
+		} else if (offset === -1 && page > 1) {
+			page = page - 1;
+		} else {
+			return;
+		}
+		dispatch('updateSearch', {
+			query: query.query,
+			type: ResultType.Address,
+			page: page
+		} as SearchResult);
+		state = State.LoadServer;
+		try {
+			await fetchServerData();
+		} catch (e) {
+			console.log('no server', e);
+		}
 		state = State.Loaded;
 	}
 
@@ -128,7 +175,7 @@
 
 	function isCurrent(address: string | undefined): boolean {
 		if (address) {
-			return address.toLowerCase() == query.toLowerCase();
+			return address.toLowerCase() == query.query.toLowerCase();
 		}
 		return false;
 	}
@@ -156,7 +203,7 @@
 		{:else if state == State.Loaded || state == State.LoadServer}
 			<Card class="mb-3">
 				<CardHeader>
-					Address {query}
+					Address {query.query}
 				</CardHeader>
 				<CardBody>
 					<Table responsive borderless class="table-nomargin">
@@ -166,7 +213,7 @@
 								<td>{formatEth(balance)} Ether</td>
 							</tr>
 							<tr>
-								<th class="titleWidth" scope="row">Total Transactions</th>
+								<th class="titleWidth" scope="row">Outgoing Txs</th>
 								<td>{totalTx}</td>
 							</tr>
 							{#if ensAddress}
@@ -212,6 +259,22 @@
 					{:else if state == State.Loaded}
 						{#if txs}
 							<hr />
+							<div class="d-flex mb-3">
+								<div class="ms-auto p-2">
+									<ButtonGroup>
+										{#if page > 1}
+											<Button class="pull-right" on:click={async () => await gotoPage(-1)}
+												>Previous</Button
+											>
+										{/if}
+										{#if hasNextPage}
+											<Button class="pull-right" on:click={async () => await gotoPage(1)}
+												>Next</Button
+											>
+										{/if}
+									</ButtonGroup>
+								</div>
+							</div>
 							<Table responsive borderless class="table-nomargin">
 								<tbody>
 									<tr>

@@ -12,37 +12,53 @@
 	import { DescanClient } from '../lib/api';
 	import { ethers } from 'ethers';
 
-  const version:string = __APP_VERSION__;
-	$: current = getCurrent($page.url.searchParams);
+	const version: string = __APP_VERSION__;
+	let current: SearchResult | null;
 
 	function getCurrent(params: URLSearchParams): SearchResult | null {
 		const typeStr = params.get('type');
 		const queryStr = params.get('query');
+		const page = params.get('page');
 		if (typeStr && queryStr) {
+			let cPage = 1;
+			if (page) {
+				cPage = parseInt(page);
+			}
 			const type: ResultType = parseInt(typeStr) as ResultType;
 			return {
 				query: queryStr,
-				type: type
+				type: type,
+				page: cPage
 			} as SearchResult;
 		}
 		return null;
 	}
 
-  let client: DescanClient = new DescanClient("http://127.0.0.1:9090", 0);
+	let client: DescanClient = new DescanClient('http://127.0.0.1:9090', 0);
 
 	onMount(async () => {
 		if (window.ethereum !== undefined) {
 			const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
 			const network = await provider.getNetwork();
-      client.setNetwork(network.chainId);
+			client.setNetwork(network.chainId);
 		}
+		current = getCurrent($page.url.searchParams);
 		console.log('mount');
 	});
 
 	function handleSearch(res: CustomEvent<SearchResult>) {
+		updateSearch(res);
+		console.log('gone to');
+		current = getCurrent($page.url.searchParams);
+	}
+
+	function updateSearch(res: CustomEvent<SearchResult>) {
 		let qs = new URLSearchParams($page.url.searchParams.toString());
 		qs.set('type', res.detail.type.toString());
 		qs.set('query', res.detail.query);
+		if (res.detail.page) {
+			qs.set('page', res.detail.page.toString());
+		}
 		console.log(qs.toString());
 		goto(`/?${qs.toString()}`);
 	}
@@ -52,13 +68,13 @@
 	<title>Decentralized Explorer</title>
 </svelte:head>
 
-<Nav on:search={handleSearch} client={client} />
+<Nav on:search={handleSearch} {client} />
 <Container>
 	<div class="padded" />
 	<Row>
 		{#if current}
 			{#if current.type == ResultType.Address}
-				<Address query={current.query} on:search={handleSearch} client={client}/>
+				<Address query={current} on:search={handleSearch} on:updateSearch={updateSearch} {client} />
 			{:else if current.type == ResultType.Block}
 				<Block query={current.query} on:search={handleSearch} />
 			{:else if current.type == ResultType.Transaction}
@@ -66,16 +82,22 @@
 			{/if}
 		{:else}
 			<Row>
-				<Col><h1>Decentralized Explorer</h1></Col>
+				<Col
+					><h1>DScan: A Decentralized Explorer</h1>
+					<p>DScan provides a minimally-centralized Ethereum blockchain explorer.</p></Col
+				>
 			</Row>
 		{/if}
 	</Row>
 </Container>
 
 <div class="container">
-  <footer class="py-3 my-4">
-    <p class="text-center text-muted"><a href="https://gitlab.com/0xhyacinths/dscan" class="text-muted">DScan</a> {version}</p>
-  </footer>
+	<footer class="py-3 my-4">
+		<p class="text-center text-muted">
+			<a href="https://gitlab.com/0xhyacinths/dscan" class="text-muted">DScan</a>
+			{version}
+		</p>
+	</footer>
 </div>
 
 <style>

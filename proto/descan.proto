@@ -12,10 +12,13 @@ message Hello {
 
 message TxByAddressRequest {
   string address = 1;
+  uint64 offset = 2;
+  uint64 page = 3;
 }
 
 message TxByAddressResponse {
   repeated TransactionSummary txs = 1;
+  bool has_more = 2;
 }
 
 message TransactionSummary {

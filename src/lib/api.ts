@@ -31,7 +31,7 @@ export class DescanClient {
     this.message = writable("");
     this.network = network;
     setInterval(this.healthCheck.bind(this), 5000);
-    this.healthCheck();
+    setTimeout(this.healthCheck.bind(this), 100);
   }
 
   setNetwork(network: number) {

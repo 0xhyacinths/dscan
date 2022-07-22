@@ -28,9 +28,12 @@
 		return null;
 	}
 
-	let client: DescanClient = new DescanClient('http://127.0.0.1:9090', 0);
+
+	let client: DescanClient = new DescanClient("http://127.0.0.1:9090", 0);
 
 	onMount(async () => {
+    const endpoint = window.localStorage.getItem('endpoint') ?? "http://127.0.0.1:9090";
+    client.setEndpoint(endpoint);
 		if (window.ethereum !== undefined) {
 			const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
 			const network = await provider.getNetwork();

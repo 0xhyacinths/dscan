@@ -69,6 +69,7 @@
 		try {
 			receipt = await provider.getTransactionReceipt(query);
 			txn = await provider.getTransaction(query);
+			console.log(txn);
 			block = await provider.getBlock(txn.blockHash!);
 			senderENS = await provider.lookupAddress(receipt.from);
 			height = await provider.getBlockNumber();
@@ -267,22 +268,24 @@
 										<th class="titleWidth" scope="row">Gas Utilization</th>
 										<td>{receipt.gasUsed} / {txn.gasLimit}</td>
 									</tr>
-									<tr>
-										<th class="titleWidth" scope="row">Max Fee</th>
-										<td>{formatGwei(txn.maxFeePerGas)} Gwei</td>
-									</tr>
-									<tr>
-										<th class="titleWidth" scope="row">Base Fee</th>
-										<td>{formatGwei(block.baseFeePerGas)} Gwei</td>
-									</tr>
-									<tr>
-										<th class="titleWidth" scope="row">Max Priority Fee</th>
-										<td>{formatGwei(txn.maxPriorityFeePerGas)} Gwei</td>
-									</tr>
-									<tr>
-										<th class="titleWidth" scope="row">EIP-1559 Burned</th>
-										<td>{formatEth(fixBN(block.baseFeePerGas).mul(receipt.gasUsed))} Ether</td>
-									</tr>
+									{#if txn.type === 2}
+										<tr>
+											<th class="titleWidth" scope="row">Max Fee</th>
+											<td>{formatGwei(txn.maxFeePerGas)} Gwei</td>
+										</tr>
+										<tr>
+											<th class="titleWidth" scope="row">Base Fee</th>
+											<td>{formatGwei(block.baseFeePerGas)} Gwei</td>
+										</tr>
+										<tr>
+											<th class="titleWidth" scope="row">Max Priority Fee</th>
+											<td>{formatGwei(txn.maxPriorityFeePerGas)} Gwei</td>
+										</tr>
+										<tr>
+											<th class="titleWidth" scope="row">EIP-1559 Burned</th>
+											<td>{formatEth(fixBN(block.baseFeePerGas).mul(receipt.gasUsed))} Ether</td>
+										</tr>
+									{/if}
 								</tbody>
 							</Table>
 						</TabPane>

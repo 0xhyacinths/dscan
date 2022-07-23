@@ -79,5 +79,6 @@ type handler struct {
 func (h *handler) SayHi(ctx context.Context, g *proto.Hello) (*proto.Hello, error) {
 	return &proto.Hello{
 		Message: "Data provided by Etherscan.",
+		ChainId: 1,
 	}, nil
 }

@@ -37,7 +37,7 @@
 	let balance: ethers.BigNumber;
 	let contractCode: string;
 	let totalTx: number;
-  let address: string | null;
+	let address: string | null;
 	let ensAddress: string | null;
 	let cborData: string | null;
 	let page = 1;
@@ -68,11 +68,11 @@
 		}
 		const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
 		try {
-      if(/.*\.eth/.test(query.query)) {
-        address = await provider.resolveName(query.query);
-      } else {
-        address = query.query;
-      }
+			if (/.*\.eth/.test(query.query)) {
+				address = await provider.resolveName(query.query);
+			} else {
+				address = query.query;
+			}
 			balance = await provider.getBalance(address!);
 			contractCode = await provider.getCode(address!);
 			if (contractCode.length > 2) {
@@ -98,7 +98,7 @@
 	}
 
 	async function fetchServerData() {
-    txs = [];
+		txs = [];
 		let response = await client.getTxsForAddress(address!, page.toString(), offset.toString());
 		txs = response?.txs;
 		hasNextPage = response?.hasMore;
@@ -256,22 +256,24 @@
 					{:else if state == State.Loaded}
 						{#if txs}
 							<hr />
-							<div class="d-flex mb-3">
-								<div class="ms-auto p-2">
-									<ButtonGroup>
-										{#if page > 1}
-											<Button class="pull-right" on:click={async () => await gotoPage(-1)}
-												>Previous</Button
-											>
-										{/if}
-										{#if hasNextPage}
-											<Button class="pull-right" on:click={async () => await gotoPage(1)}
-												>Next</Button
-											>
-										{/if}
-									</ButtonGroup>
+							{#if page > 1 || hasNextPage}
+								<div class="d-flex mb-3">
+									<div class="ms-auto p-2">
+										<ButtonGroup>
+											{#if page > 1}
+												<Button class="pull-right" on:click={async () => await gotoPage(-1)}
+													>Previous</Button
+												>
+											{/if}
+											{#if hasNextPage}
+												<Button class="pull-right" on:click={async () => await gotoPage(1)}
+													>Next</Button
+												>
+											{/if}
+										</ButtonGroup>
+									</div>
 								</div>
-							</div>
+							{/if}
 							<Table responsive borderless class="table-nomargin">
 								<tbody>
 									<tr>

@@ -19,7 +19,13 @@
 					type: ResultType.Address
 				} as SearchResult);
 				break;
-			case /[0-9]*/.test(query):
+      case /.*\.eth/.test(query):
+				dispatch('search', {
+					query: query,
+					type: ResultType.Address
+				} as SearchResult);
+				break;
+			case /[0-9]+/.test(query):
 				dispatch('search', {
 					query: query,
 					type: ResultType.Block

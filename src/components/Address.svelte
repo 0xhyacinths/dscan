@@ -37,6 +37,7 @@
 	let balance: ethers.BigNumber;
 	let contractCode: string;
 	let totalTx: number;
+  let address: string | null;
 	let ensAddress: string | null;
 	let cborData: string | null;
 	let page = 1;
@@ -67,15 +68,20 @@
 		}
 		const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
 		try {
-			balance = await provider.getBalance(query.query);
-			contractCode = await provider.getCode(query.query);
+      if(/.*\.eth/.test(query.query)) {
+        address = await provider.resolveName(query.query);
+      } else {
+        address = query.query;
+      }
+			balance = await provider.getBalance(address!);
+			contractCode = await provider.getCode(address!);
 			if (contractCode.length > 2) {
 				cborData = parseCBOR(contractCode);
 			} else {
 				cborData = null;
 			}
-			totalTx = await provider.getTransactionCount(query.query);
-			ensAddress = await provider.lookupAddress(query.query);
+			totalTx = await provider.getTransactionCount(address!);
+			ensAddress = await provider.lookupAddress(address!);
 		} catch (e) {
 			err = (e as any).toString();
 			state = State.Error;
@@ -93,7 +99,7 @@
 
 	async function fetchServerData() {
     txs = [];
-		let response = await client.getTxsForAddress(query.query, page.toString(), offset.toString());
+		let response = await client.getTxsForAddress(address!, page.toString(), offset.toString());
 		txs = response?.txs;
 		hasNextPage = response?.hasMore;
 	}
@@ -164,9 +170,9 @@
 		}
 	}
 
-	function isCurrent(address: string | undefined): boolean {
-		if (address) {
-			return address.toLowerCase() == query.query.toLowerCase();
+	function isCurrent(inAddr: string | undefined): boolean {
+		if (inAddr) {
+			return inAddr.toLowerCase() == address!.toLowerCase();
 		}
 		return false;
 	}
@@ -194,7 +200,7 @@
 		{:else if state == State.Loaded || state == State.LoadServer}
 			<Card class="mb-3">
 				<CardHeader>
-					Address {query.query}
+					Address {address}
 				</CardHeader>
 				<CardBody>
 					<Table responsive borderless class="table-nomargin">

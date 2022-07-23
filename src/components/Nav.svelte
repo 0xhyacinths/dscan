@@ -12,13 +12,13 @@
 		Input
 	} from 'sveltestrap';
 	import type { DescanClient } from '../lib/api';
-  import {onMount} from 'svelte';
+	import { onMount } from 'svelte';
 	import Search from './Search.svelte';
 
 	export let client: DescanClient;
-	let alive: boolean = false;
-	let message: string = '';
-  let endpoint: string;
+	let alive = false;
+	let message = '';
+	let endpoint: string;
 
 	client.alive.subscribe((val) => {
 		alive = val;
@@ -27,27 +27,27 @@
 		message = val;
 	});
 
-  onMount(async () => {
-    endpoint = client.getEndpoint()
-  });
+	onMount(async () => {
+		endpoint = client.getEndpoint();
+	});
 
 	let open = false;
 
 	function toggle() {
-    endpoint = client.getEndpoint();
-    open = !open;
-  };
+		endpoint = client.getEndpoint();
+		open = !open;
+	}
 
-  async function saveChanges() {
-    window.localStorage.setItem('endpoint', endpoint);
-    console.log(endpoint);
-    client.setEndpoint(endpoint);
-    toggle();
-  }
+	async function saveChanges() {
+		window.localStorage.setItem('endpoint', endpoint);
+		console.log(endpoint);
+		client.setEndpoint(endpoint);
+		toggle();
+	}
 
-  async function cancelChanges() {
-    toggle();
-  }
+	async function cancelChanges() {
+		toggle();
+	}
 </script>
 
 <Navbar color="light" light expand="md">
@@ -65,14 +65,14 @@
 		<ModalBody>
 			{#if alive}
 				Connected to indexer server. <br />
-        {message}
+				{message}
 			{:else}
 				Not connected to indexer server.
 			{/if}
 			<hr />
 			<FormGroup>
 				<Label>Indexer URI</Label>
-				<Input bind:value={endpoint}/>
+				<Input bind:value={endpoint} />
 			</FormGroup>
 		</ModalBody>
 		<ModalFooter>

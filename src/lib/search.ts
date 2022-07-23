@@ -1,10 +1,10 @@
 export enum ResultType {
-  Address,
-  Block,
-  Transaction
+	Address,
+	Block,
+	Transaction
 }
 
 export interface SearchResult {
-  query: string,
-  type: ResultType,
+	query: string;
+	type: ResultType;
 }

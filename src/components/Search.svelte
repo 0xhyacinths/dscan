@@ -19,7 +19,7 @@
 					type: ResultType.Address
 				} as SearchResult);
 				break;
-      case /.*\.eth/.test(query):
+			case /.*\.eth/.test(query):
 				dispatch('search', {
 					query: query,
 					type: ResultType.Address

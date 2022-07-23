@@ -17,8 +17,8 @@ module.exports = {
 		es2017: true,
 		node: true
 	},
-  rules: {
-    "@typescript-eslint/no-namespace": "off",
-    "@typescript-eslint/no-empty-interface": "off"
-  }
+	rules: {
+		'@typescript-eslint/no-namespace': 'off',
+		'@typescript-eslint/no-empty-interface': 'off'
+	}
 };

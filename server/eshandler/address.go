@@ -1,4 +1,4 @@
-package main
+package eshandler
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"gitlab.com/0xhyacinths/dscan/server/proto"
 )
 
-func (h *handler) TxByAddress(ctx context.Context, g *proto.TxByAddressRequest) (*proto.TxByAddressResponse, error) {
+func (h *EtherscanHandler) TxByAddress(ctx context.Context, g *proto.TxByAddressRequest) (*proto.TxByAddressResponse, error) {
 	txs, err := h.es.NormalTxByAddress(g.Address, nil, nil, int(g.Page), int(g.Offset)+1, true)
 	if err != nil {
 		return nil, err

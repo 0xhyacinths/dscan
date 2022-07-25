@@ -10,6 +10,7 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/nanmu42/etherscan-api"
+	"gitlab.com/0xhyacinths/dscan/server/eshandler"
 	"gitlab.com/0xhyacinths/dscan/server/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -17,20 +18,21 @@ import (
 )
 
 func main() {
+	// Create gRPC server
 	lis, err := net.Listen("tcp", ":9091")
 	if err != nil {
 		log.Fatalln("Failed to listen:", err)
 	}
 
 	grpcServer := grpc.NewServer()
-	hd := &handler{
-		es: etherscan.New(etherscan.Mainnet, os.Getenv("ES_API")),
-	}
-	proto.RegisterDescanIndexerServer(grpcServer, hd)
+	escan := etherscan.New(etherscan.Mainnet, os.Getenv("ES_API"))
+	handler := eshandler.NewEtherscanHandler(escan)
+	proto.RegisterDescanIndexerServer(grpcServer, handler)
 	go func() {
 		log.Fatalln(grpcServer.Serve(lis))
 	}()
 
+	// Create gRPC client to server that was just set up
 	conn, err := grpc.DialContext(
 		context.Background(),
 		"0.0.0.0:9091",
@@ -42,6 +44,7 @@ func main() {
 		log.Fatalln("Failed to dial server:", err)
 	}
 
+	// Create a gRPC Gateway server
 	gwmux := runtime.NewServeMux()
 	err = proto.RegisterDescanIndexerHandler(context.Background(), gwmux, conn)
 	if err != nil {
@@ -69,16 +72,4 @@ func corsWrapper(h http.Handler) http.Handler {
 		}
 		h.ServeHTTP(w, r)
 	})
-}
-
-type handler struct {
-	es *etherscan.Client
-	proto.UnimplementedDescanIndexerServer
-}
-
-func (h *handler) SayHi(ctx context.Context, g *proto.Hello) (*proto.Hello, error) {
-	return &proto.Hello{
-		Message: "Data provided by Etherscan.",
-		ChainId: 1,
-	}, nil
 }

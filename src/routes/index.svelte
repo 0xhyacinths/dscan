@@ -62,7 +62,7 @@
 	<title>Decentralized Explorer</title>
 </svelte:head>
 
-<Nav on:search={handleSearch} {client} />
+<Nav on:search={handleSearch} base={basedir} {client} />
 <Container>
 	<div class="padded" />
 	<Row>

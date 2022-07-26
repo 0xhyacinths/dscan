@@ -254,7 +254,7 @@
 							<Spinner color="dark" />
 						</div>
 					{:else if state == State.Loaded}
-						{#if txs}
+						{#if txs && txs.length > 0}
 							<hr />
 							{#if page > 1 || hasNextPage}
 								<div class="d-flex mb-3">

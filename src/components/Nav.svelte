@@ -16,6 +16,7 @@
 	import Search from './Search.svelte';
 
 	export let client: DescanClient;
+  export let base: string;
 	let alive = false;
 	let message = '';
 	let endpoint: string;
@@ -51,7 +52,7 @@
 </script>
 
 <Navbar color="light" light expand="md">
-	<NavbarBrand href="/">DScan</NavbarBrand>
+	<NavbarBrand href="{base}/">DScan</NavbarBrand>
 	<Search on:search />
 	<Button on:click={toggle}>
 		{#if alive}

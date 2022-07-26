@@ -7,7 +7,8 @@ const revision = child.execSync('git rev-parse HEAD').toString().trim();
 const config = {
 	plugins: [sveltekit()],
 	define: {
-		__APP_VERSION__: JSON.stringify(revision.slice(0, 8))
+		__APP_VERSION__: JSON.stringify(revision.slice(0, 8)),
+    __BASE_PATH__: JSON.stringify(process.env.OUTPUT_BASE ? process.env.OUTPUT_BASE : "")
 	}
 };
 

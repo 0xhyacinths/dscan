@@ -13,6 +13,7 @@
 	import { ethers } from 'ethers';
 
 	const version: string = __APP_VERSION__;
+  const basedir: string = __BASE_PATH__;
 	$: current = getCurrent($page.url.searchParams);
 
 	function getCurrent(params: URLSearchParams): SearchResult | null {
@@ -53,7 +54,7 @@
 		qs.set('type', res.detail.type.toString());
 		qs.set('query', res.detail.query);
 		console.log(qs.toString());
-		await goto(`/?${qs.toString()}`);
+		await goto(`${basedir}/?${qs.toString()}`);
 	}
 </script>
 

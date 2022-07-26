@@ -3,8 +3,8 @@ package eshandler
 import (
 	"context"
 
+	"github.com/0xhyacinths/dscan/server/proto"
 	"github.com/nanmu42/etherscan-api"
-	"gitlab.com/0xhyacinths/dscan/server/proto"
 )
 
 type EtherscanHandler struct {

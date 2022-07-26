@@ -87,7 +87,7 @@
 <div class="container">
 	<footer class="py-3 my-4">
 		<p class="text-center text-muted">
-			<a href="https://gitlab.com/0xhyacinths/dscan" class="text-muted">DScan</a>
+			<a href="https://github.com/0xhyacinths/dscan" class="text-muted">DScan</a>
 			{version}
 		</p>
 	</footer>

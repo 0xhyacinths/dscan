@@ -1,4 +1,4 @@
-module gitlab.com/0xhyacinths/dscan/server
+module github.com/0xhyacinths/dscan/server
 
 go 1.18
 

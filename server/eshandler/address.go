@@ -3,7 +3,7 @@ package eshandler
 import (
 	"context"
 
-	"gitlab.com/0xhyacinths/dscan/server/proto"
+	"github.com/0xhyacinths/dscan/server/proto"
 )
 
 func (h *EtherscanHandler) TxByAddress(ctx context.Context, g *proto.TxByAddressRequest) (*proto.TxByAddressResponse, error) {

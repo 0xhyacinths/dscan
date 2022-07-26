@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/0xhyacinths/dscan/server/eshandler"
+	"github.com/0xhyacinths/dscan/server/proto"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/nanmu42/etherscan-api"
-	"gitlab.com/0xhyacinths/dscan/server/eshandler"
-	"gitlab.com/0xhyacinths/dscan/server/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/grpclog"

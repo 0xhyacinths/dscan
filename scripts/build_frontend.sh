@@ -1,7 +1,7 @@
 #!/bin/bash
 
-mkdir -p ./apispec
-mkdir -p ./src/lib/proto
+mkdir -p ./webui/apispec
+mkdir -p ./webui/src/lib/proto
 
 # require go
 # install protoc generator
@@ -10,8 +10,10 @@ go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.11.
 # require protoc
 protoc \
   -I ./proto \
-  --openapiv2_out=./apispec \
+  --openapiv2_out=./webui/apispec \
   ./proto/descan.proto
+
+pushd webui
 
 # require node
 npm install
@@ -22,3 +24,5 @@ npx openapi-typescript ./apispec/descan.swagger.json \
 
 # require node
 OUTPUT_BASE="/dscan" npm run build
+
+popd

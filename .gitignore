@@ -1,11 +1,11 @@
 .DS_Store
 node_modules
-/build
-/.svelte-kit
-/package
+webui/build
+webui/.svelte-kit
+webui/package
 .env
 .env.*
 !.env.example
 server/proto/*
-src/lib/proto/*
-apispec/**
+webui/src/lib/proto/*
+webui/apispec/**

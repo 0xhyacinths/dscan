@@ -14,7 +14,7 @@ Allowing users to build their own indexer or even UIs that utilize these indexer
 services around a specified API will provide many options for a block explorer
 instead of one or two well-known ones.
 
-## UI
+## Web UI
 
 The UI is just a bunch of static HTML, JS, and CSS. You can throw it behind any
 web server that can handle this. However, because of how the UI works, data is

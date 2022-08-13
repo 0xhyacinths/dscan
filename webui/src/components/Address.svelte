@@ -232,6 +232,12 @@
 										/></td
 									>
 								</tr>
+								<tr>
+									<th class="titleWidth" scope="row">Call Contract</th>
+									<td>
+										<a href="https://etherfunk.io/address/{address}">Call Contract (on etherfunk.io)</a>
+									</td>
+								</tr>
 							{/if}
 							{#if cborData}
 								<tr>

@@ -54,12 +54,18 @@
 			} else {
 				block = await provider.getBlock(parseInt(query));
 			}
-			minerENS = await provider.lookupAddress(block.miner);
 		} catch (e) {
 			err = (e as any).toString();
 			state = State.Error;
 			return;
 		}
+
+    try {
+			minerENS = await provider.lookupAddress(block.miner);
+		} catch (e) {
+			console.log("error resolving ens", e);
+		}
+
 		state = State.Loaded;
 	}
 

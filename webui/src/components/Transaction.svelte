@@ -71,11 +71,9 @@
 			txn = await provider.getTransaction(query);
 			console.log(txn);
 			block = await provider.getBlock(txn.blockHash!);
-			senderENS = await provider.lookupAddress(receipt.from);
 			height = await provider.getBlockNumber();
 			console.log(receipt);
 			if (receipt.to) {
-				receiverENS = await provider.lookupAddress(receipt.to);
 				recipientContract = (await provider.getCode(receipt.to)).length > 2;
 			}
 		} catch (e) {
@@ -83,6 +81,16 @@
 			state = State.Error;
 			return;
 		}
+
+    try {
+			senderENS = await provider.lookupAddress(receipt.from);
+			if (receipt.to) {
+				receiverENS = await provider.lookupAddress(receipt.to);
+			}
+		} catch (e) {
+			console.log("error resolving ens", e);
+		}
+
 		state = State.Loaded;
 	}
 

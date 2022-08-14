@@ -56,9 +56,9 @@
 	<Search on:search />
 	<Button on:click={toggle}>
 		{#if alive}
-			Connected
+			Full Data
 		{:else}
-			Disconnected
+			Lightweight Data
 		{/if}
 	</Button>
 	<Modal isOpen={open} {toggle}>
@@ -68,7 +68,9 @@
 				Connected to indexer server. <br />
 				{message}
 			{:else}
-				Not connected to indexer server.
+				Not connected to indexer server. You should still be able to use the
+        in-browser provider to view basic details, but transaction history may
+        not be available.
 			{/if}
 			<hr />
 			<FormGroup>

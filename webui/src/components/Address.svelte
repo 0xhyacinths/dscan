@@ -81,12 +81,18 @@
 				cborData = null;
 			}
 			totalTx = await provider.getTransactionCount(address!);
-			ensAddress = await provider.lookupAddress(address!);
 		} catch (e) {
 			err = (e as any).toString();
 			state = State.Error;
 			return;
 		}
+
+    try {
+			ensAddress = await provider.lookupAddress(address!);
+    } catch (e) {
+			console.log("error resolving ens", e);
+		}
+
 		state = State.LoadServer;
 		try {
 			await fetchServerData();
